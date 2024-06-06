@@ -113,3 +113,102 @@ const action = "null";
           break;
       }
     });
+
+    //function for sending all tabs details to the content.js
+    const sendAllTabs = async (id) => {
+      if (currentWindow === false) {
+        chrome.tabs.query({}, async function (tabs) {
+          const modifiedTabs = await Promise.all(
+            tabs.map(async (tab) => {
+              //check for bookmarked
+              const isTabBookMarked = await isTabBookmarked(tab.url);
+
+              //chech for starMarked
+              const isStarMarked = starTabs.has(tab.id);
+              return { ...tab, isTabBookMarked, isStarMarked };
+            })
+          );
+          const tabsData = {
+            id: id,
+            data: modifiedTabs,
+          };
+          port.postMessage(tabsData);
+        });
+      } else {
+        chrome.tabs.query({ currentWindow: true }, async function (tabs) {
+          const modifiedTabs = await Promise.all(
+            tabs.map(async (tab) => {
+              //check for bookmarked
+              const isTabBookMarked = await isTabBookmarked(tab.url);
+
+              //chech for starMarked
+              const isStarMarked = starTabs.has(tab.id);
+              return { ...tab, isTabBookMarked, isStarMarked };
+            })
+          );
+          const tabsData = {
+            id: id,
+            data: modifiedTabs,
+          };
+          port.postMessage(tabsData);
+        });
+      }
+    };
+
+    //function for deleting the particular tab
+    const DeleteParticularTab = (id, tabId) => {
+      chrome.tabs.remove(tabId, function () {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Pinning the particular tab
+    const PinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: true }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Unpinning the particular tab
+    const UnpinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: false }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Duplicating the particular tab
+    const DuplicateParticularTab = (id, tabId) => {
+      chrome.tabs.get(tabId, function (tab) {
+        if (tab) {
+          chrome.tabs.create(
+            { url: tab.url, active: false },
+            function (duplicatedTab) {
+              sendAllTabs(1);
+            }
+          );
+        } else {
+          console.error("Tab with ID " + tabId + " not found");
+        }
+      });
+    };
+
+    //function for Changing Active Tab
+    const changeActiveTab = (id, tabId, windowId) => {
+      console.log(windowId);
+      chrome.windows.update(windowId, { focused: true });
+      chrome.tabs.update(tabId, { active: true });
+    };
+
+    //fucntion for Arranging tabs in Alphabetical Order
+    const ArrangeTabsInAlphabeticalOrder = () => {
+      chrome.tabs.query({}, function (tabs) {
+        tabs.sort(function (a, b) {
+          return a.title.localeCompare(b.title);
+        });
+
+        tabs.forEach(function (tab, index) {
+          chrome.tabs.move(tab.id, { index: index });
+        });
+        sendAllTabs(1);
+      });
+    };
