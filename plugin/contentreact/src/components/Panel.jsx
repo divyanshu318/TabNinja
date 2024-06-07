@@ -9,6 +9,8 @@ const Panel = ()=>{
     const [searchedTabs, setSearchedTabs] = useState([]);
     const [message, setMessage] = useState("");
     const [selectedTab, setSelectedTab] = useState(null);
+    const [searchedGroups, setSearchedGroups] = useState([]);
+    const [groupId, setGroupId] = useState(null);
     const port = chrome.runtime.connect({ name: "tabify" });
 
     return(
@@ -30,6 +32,30 @@ const Panel = ()=>{
                             setMessage={setMessage}
                             setSelectedTab={setSelectedTab}
                             setDisplayMain={setDisplayMain}
+                        />
+                        )}
+                        {displayMain === "createGroup" && (
+                        <CreateGroupComponent
+                            port={port}
+                            setDisplayMain={setDisplayMain}
+                        />
+                        )}
+                        {displayMain === "group" && (
+                        <Groups
+                            groups={searchedGroups}
+                            port={port}
+                            selectedTab={selectedTab}
+                            setDisplayMain={setDisplayMain}
+                            setMessage={setMessage}
+                            setGroupId={setGroupId}
+                        />
+                        )}
+                        {displayMain === "groupTab" && (
+                        <GroupTab
+                            groupTabs={searchedGroupTabs}
+                            setMessage={setMessage}
+                            port={port}
+                            groupId={groupId}
                         />
                         )}
                     </div>
