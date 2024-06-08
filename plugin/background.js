@@ -351,3 +351,160 @@ const action = "null";
       starTabs.delete(tabId);
       sendAllTabs(1);
     };
+
+    //sending startab variable
+    const getStarTabVariable = () => {
+      const starTabVar = {
+        id: 21,
+        showStarTabs: showStarTabs,
+      };
+      port.postMessage(starTabVar);
+    };
+
+    //changing value of starVariable
+    const setStarVariable = (value) => {
+      showStarTabs = value;
+      getStarTabVariable();
+    };
+
+    //add tab to working area by URL
+    const addTabToWorkingAreaByUrl = (url) => {
+      chrome.tabs.create({ url: url, active: false }, function (duplicatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //listening of new tabs
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+      if (changeInfo.status === "complete") {
+        sendAllTabs(1);
+      }
+    });
+
+    //listening of newly created or deleted tabs
+    chrome.tabs.onCreated.addListener(() => sendAllTabs(1));
+    chrome.tabs.onRemoved.addListener(() => sendAllTabs(1));
+    chrome.tabs.onActivated.addListener(() => sendAllTabs(1));
+
+    //open all group tabs
+    const openAllGroupTabs = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/gettabs";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const tabsArray = resJson.data.tabs;
+      tabsArray.forEach((tabs) => {
+        chrome.tabs.create(
+          { url: tabs.url, active: false },
+          function (duplicatedTab) {}
+        );
+        sendAllTabs(1);
+      });
+    };
+
+    //creating a group
+    const createGroup = async (groupName) => {
+      const url = "http://localhost:8000/api/v1/groups/addgroup";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        name: groupName,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const createGroupData = {
+        id: 23,
+        data: resJson,
+      };
+      port.postMessage(createGroupData);
+    };
+
+    //fetching All groups
+    const getAllUserGroups = async () => {
+      const url = "http://localhost:8000/api/v1/groups/getgroups";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+      });
+      const resJson = await response.json();
+      const getAllGroupsData = {
+        id: 24,
+        data: resJson,
+      };
+      port.postMessage(getAllGroupsData);
+    };
+
+    //add tab to group
+    const addTabToGroup = async (tab, groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/addtab";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        name: tab.title,
+        favicon: tab.favIconUrl,
+        url: tab.url,
+        groupId: groupId,
+      };
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+      const resJson = await response.json();
+      const addTab = {
+        id: 25,
+        data: resJson,
+      };
+      port.postMessage(addTab);
+    };
+
+    //fetch Tab of a group
+    const getTabsOfGroup = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/gettabs";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const tabsData = {
+        id: 26,
+        data: resJson,
+      };
+      port.postMessage(tabsData);
+    };
