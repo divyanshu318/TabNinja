@@ -508,3 +508,131 @@ const action = "null";
       };
       port.postMessage(tabsData);
     };
+
+    
+    //delete Tab from a group
+    const deleteTabOfGroup = async (tabId, groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/removetab";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        tabId: tabId,
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      getTabsOfGroup(groupId);
+    };
+
+    //delete group
+    const deleteGroup = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/groups/removegroup";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        id: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      if (resJson.success === true) {
+        getAllUserGroups();
+      }
+    };
+
+    //add group via link
+    const addGroupUsingLink = async (taburl) => {
+      const url = "http://localhost:8000/api/v1/groups/addgroupusingurl";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        url: taburl,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const group = {
+        id: 31,
+        data: resJson,
+      };
+      port.postMessage(group);
+    };
+  });
+})();
+
+//function to generate random 8 digit number
+function generateRandom8DigitNumber() {
+  const min = 10000000;
+  const max = 99999999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+//listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});
+
+//hibernating tabs
+const HiberNateParticularTab = (tabId) => {
+  chrome.tabs.discard(tabId);
+  tabsCode.delete(tabId);
+};
+//closing tabs
+const CloseParticularTab = (tabId) => {
+  chrome.tabs.remove(tabId);
+  tabsCode.delete(tabId);
+};
+
+//closing and hibernating window logics
+const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};
+
+//running an interval of 1s
+if (action !== "null") setInterval(closingHibernatingAction, 1000);
