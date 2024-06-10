@@ -351,3 +351,288 @@ const action = "null";
       starTabs.delete(tabId);
       sendAllTabs(1);
     };
+
+    //sending startab variable
+    const getStarTabVariable = () => {
+      const starTabVar = {
+        id: 21,
+        showStarTabs: showStarTabs,
+      };
+      port.postMessage(starTabVar);
+    };
+
+    //changing value of starVariable
+    const setStarVariable = (value) => {
+      showStarTabs = value;
+      getStarTabVariable();
+    };
+
+    //add tab to working area by URL
+    const addTabToWorkingAreaByUrl = (url) => {
+      chrome.tabs.create({ url: url, active: false }, function (duplicatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //listening of new tabs
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+      if (changeInfo.status === "complete") {
+        sendAllTabs(1);
+      }
+    });
+
+    //listening of newly created or deleted tabs
+    chrome.tabs.onCreated.addListener(() => sendAllTabs(1));
+    chrome.tabs.onRemoved.addListener(() => sendAllTabs(1));
+    chrome.tabs.onActivated.addListener(() => sendAllTabs(1));
+
+    //open all group tabs
+    const openAllGroupTabs = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/gettabs";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const tabsArray = resJson.data.tabs;
+      tabsArray.forEach((tabs) => {
+        chrome.tabs.create(
+          { url: tabs.url, active: false },
+          function (duplicatedTab) {}
+        );
+        sendAllTabs(1);
+      });
+    };
+
+    //creating a group
+    const createGroup = async (groupName) => {
+      const url = "http://localhost:8000/api/v1/groups/addgroup";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        name: groupName,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const createGroupData = {
+        id: 23,
+        data: resJson,
+      };
+      port.postMessage(createGroupData);
+    };
+
+    //fetching All groups
+    const getAllUserGroups = async () => {
+      const url = "http://localhost:8000/api/v1/groups/getgroups";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+      });
+      const resJson = await response.json();
+      const getAllGroupsData = {
+        id: 24,
+        data: resJson,
+      };
+      port.postMessage(getAllGroupsData);
+    };
+
+    //add tab to group
+    const addTabToGroup = async (tab, groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/addtab";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        name: tab.title,
+        favicon: tab.favIconUrl,
+        url: tab.url,
+        groupId: groupId,
+      };
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+      const resJson = await response.json();
+      const addTab = {
+        id: 25,
+        data: resJson,
+      };
+      port.postMessage(addTab);
+    };
+
+    //fetch Tab of a group
+    const getTabsOfGroup = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/gettabs";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const tabsData = {
+        id: 26,
+        data: resJson,
+      };
+      port.postMessage(tabsData);
+    };
+
+    
+    //delete Tab from a group
+    const deleteTabOfGroup = async (tabId, groupId) => {
+      const url = "http://localhost:8000/api/v1/tabs/removetab";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        tabId: tabId,
+        groupId: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      getTabsOfGroup(groupId);
+    };
+
+    //delete group
+    const deleteGroup = async (groupId) => {
+      const url = "http://localhost:8000/api/v1/groups/removegroup";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        id: groupId,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      if (resJson.success === true) {
+        getAllUserGroups();
+      }
+    };
+
+    //add group via link
+    const addGroupUsingLink = async (taburl) => {
+      const url = "http://localhost:8000/api/v1/groups/addgroupusingurl";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      };
+      const body = {
+        url: taburl,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      const resJson = await response.json();
+      const group = {
+        id: 31,
+        data: resJson,
+      };
+      port.postMessage(group);
+    };
+  });
+})();
+
+//function to generate random 8 digit number
+function generateRandom8DigitNumber() {
+  const min = 10000000;
+  const max = 99999999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+//listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});
+
+//hibernating tabs
+const HiberNateParticularTab = (tabId) => {
+  chrome.tabs.discard(tabId);
+  tabsCode.delete(tabId);
+};
+//closing tabs
+const CloseParticularTab = (tabId) => {
+  chrome.tabs.remove(tabId);
+  tabsCode.delete(tabId);
+};
+
+//closing and hibernating window logics
+const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};
+
+//running an interval of 1s
+if (action !== "null") setInterval(closingHibernatingAction, 1000);
