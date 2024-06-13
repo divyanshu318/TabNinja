@@ -22,7 +22,6 @@ const TabCard = ({
     setMessage,
     setSelectedTab,
     setDisplayMain,
-
 })=>{
     const [isVisible, setIsVisible] = useState(false);
 

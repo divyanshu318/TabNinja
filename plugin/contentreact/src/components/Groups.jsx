@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import GroupCard from "./GroupCard";
+import GroupCard from "./GroupCard"
 
 const Groups = ({ groups, port, selectedTab, setDisplayMain ,setMessage , setGroupId}) => {
   useEffect(() => {
