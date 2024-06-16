@@ -639,6 +639,7 @@ if (action !== "null") setInterval(closingHibernatingAction, 1000);
 
 
 //Adding more functions
+
 //function for deleting the particular tab
 const DeleteParticularTab = (id, tabId) => {
   chrome.tabs.remove(tabId, function () {
@@ -646,6 +647,42 @@ const DeleteParticularTab = (id, tabId) => {
   });
 };
 
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+//function for deleting the particular tab
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
 //function for deleting the particular tab
 const DeleteParticularTab = (id, tabId) => {
   chrome.tabs.remove(tabId, function () {
