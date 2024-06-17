@@ -7,3 +7,9 @@ A Chrome Tab Manager Extension designed to enhance productivity by enabling user
 – Sort tabs alphabetically or by last usage for user convenience
 – Automatically close or hibernate tabs based on user-defined time intervals.
 – Analyze tab usage over the last week, day, or six hours.
+
+Contributors:
+1) divyanshu318
+2) hrs-2703
+3) Snehal652
+
