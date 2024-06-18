@@ -689,3 +689,88 @@ const DeleteParticularTab = (id, tabId) => {
     sendAllTabs(1);
   });
 };
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
+const DeleteParticularTab = (id, tabId) => {
+  chrome.tabs.remove(tabId, function () {
+    sendAllTabs(1);
+  });
+};
