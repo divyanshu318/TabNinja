@@ -10,8 +10,14 @@ Features:
 6) Automatically close or hibernate tabs based on user-defined time intervals.
 7) Analyze tab usage over the last week, day, or six hours.
 
-Contributors:
-1) divyanshu318
-2) hrs-2703
-3) Snehal652
+# Contributers
+
+All are the students of Motilal Nehru National Institute of Technology
+
+**Harsh Tiwary** **Git-hub** Click [hrs-2703](https://github.com/hrs-2703)
+
+**Snehal Tripathi** **Git-hub** Click [Snehal652](https://github.com/Snehal652)
+
+**Divyanshu Bissa** **Git-hub** Click [divyanshu318](https://github.com/divyanshu318)
+
 
