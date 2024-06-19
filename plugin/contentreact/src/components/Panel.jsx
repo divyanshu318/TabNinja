@@ -5,6 +5,8 @@ import GroupTab from "./GroupTab";
 import Groups from "./Groups"
 import Tabs from "./Tabs";
 import CreateGroupComponent from "./CreateGroupComponent";
+import NavigationMenu from "./NavigationMenu";
+import InfoDisplayPanel from "./InfoDisplayPanel";
 
 const Panel = ()=>{
     const [displayPanel, setDisplayPanel] = useState(false);
@@ -93,9 +95,21 @@ const Panel = ()=>{
                         {displayMain === "AddGroupLink" && (
                             <AddGroupViaLink port={port} setDisplayMain={setDisplayMain} />
                         )}
+                        <NavigationMenu
+                            port={port}
+                            tabs={tabs}
+                            windowVariable={windowVariable}
+                            setWindowVariable={setWindowVariable}
+                            setMessage={setMessage}
+                            setDisplayStarTabs={setDisplayStarTabs}
+                            displayStarTabs={displayStarTabs}
+                            displayMain={displayMain}
+                            setDisplayMain={setDisplayMain}
+                            setSelectedTab={setSelectedTab}
+                        />
                     </div>
+                    <InfoDisplayPanel message={message} />
                 </div>
-                
             )}
         </>
     )
