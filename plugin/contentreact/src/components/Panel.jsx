@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import toast, { Toaster } from "react-hot-toast";
+import GroupTab from "./GroupTab";
+import Groups from "./Groups"
+import Tabs from "./Tabs";
+import CreateGroupComponent from "./CreateGroupComponent";
+import NavigationMenu from "./NavigationMenu";
+import InfoDisplayPanel from "./InfoDisplayPanel";
 
 const Panel = ()=>{
     const [displayPanel, setDisplayPanel] = useState(false);
@@ -12,6 +18,34 @@ const Panel = ()=>{
     const [searchedGroups, setSearchedGroups] = useState([]);
     const [groupId, setGroupId] = useState(null);
     const port = chrome.runtime.connect({ name: "tabify" });
+
+    useEffect(() => {
+        //getting all tabs
+        getAllTabsInfo();
+        getCurrentWindowVariable();
+        getStarWindowVariable();
+    }, []);
+
+    const getAllTabsInfo = () => {
+        const getAllTabs = {
+            id: 1,
+        };
+        port.postMessage(getAllTabs);
+    };
+
+    const getCurrentWindowVariable = () => {
+        const getWindowVariable = {
+            id: 14,
+        };
+        port.postMessage(getWindowVariable);
+    };
+
+    const getStarWindowVariable = () => {
+        const starWindowVar = {
+            id: 21,
+        };
+        port.postMessage(starWindowVar);
+    };
 
     return(
         <>
@@ -58,9 +92,24 @@ const Panel = ()=>{
                             groupId={groupId}
                         />
                         )}
+                        {displayMain === "AddGroupLink" && (
+                            <AddGroupViaLink port={port} setDisplayMain={setDisplayMain} />
+                        )}
+                        <NavigationMenu
+                            port={port}
+                            tabs={tabs}
+                            windowVariable={windowVariable}
+                            setWindowVariable={setWindowVariable}
+                            setMessage={setMessage}
+                            setDisplayStarTabs={setDisplayStarTabs}
+                            displayStarTabs={displayStarTabs}
+                            displayMain={displayMain}
+                            setDisplayMain={setDisplayMain}
+                            setSelectedTab={setSelectedTab}
+                        />
                     </div>
+                    <InfoDisplayPanel message={message} />
                 </div>
-                
             )}
         </>
     )
