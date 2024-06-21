@@ -774,3 +774,50 @@ const DeleteParticularTab = (id, tabId) => {
     sendAllTabs(1);
   });
 };
+
+const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};
