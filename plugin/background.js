@@ -821,3 +821,29 @@ const closingHibernatingAction = () => {
     tabCloseTime.delete(timeNow);
   }
 };
+
+    //function for Pinning the particular tab
+    const PinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: true }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Unpinning the particular tab
+    const UnpinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: false }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };    //function for Pinning the particular tab
+    const PinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: true }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Unpinning the particular tab
+    const UnpinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: false }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
