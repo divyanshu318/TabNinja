@@ -847,3 +847,33 @@ const closingHibernatingAction = () => {
         sendAllTabs(1);
       });
     };
+
+    //listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});//listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});
