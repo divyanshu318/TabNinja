@@ -774,3 +774,106 @@ const DeleteParticularTab = (id, tabId) => {
     sendAllTabs(1);
   });
 };
+
+const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};const closingHibernatingAction = () => {
+  const timeNow = Math.floor(new Date().getTime() / 1000);
+  if (tabCloseTime.has(timeNow)) {
+    const { tabId, pass } = tabCloseTime.get(timeNow);
+    const tabLockKey = tabsCode.get(tabId);
+    console.log("tabId", tabId, "pass", pass, "tabLockKey", tabLockKey);
+    if (pass === tabLockKey) {
+      if (action === "hibernate") {
+        HiberNateParticularTab(tabId);
+      } else if (action === "close") {
+        CloseParticularTab(tabId);
+      }
+    }
+    tabCloseTime.delete(timeNow);
+  }
+};
+
+    //function for Pinning the particular tab
+    const PinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: true }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Unpinning the particular tab
+    const UnpinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: false }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };    //function for Pinning the particular tab
+    const PinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: true }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //function for Unpinning the particular tab
+    const UnpinParticularTab = (id, tabId) => {
+      chrome.tabs.update(tabId, { pinned: false }, function (updatedTab) {
+        sendAllTabs(1);
+      });
+    };
+
+    //listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});//listening of change of active tabs
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
+    console.log("currentTabId", currentTabId);
+    const tabLockKey = generateRandom8DigitNumber();
+    console.log("tabLockKey", tabLockKey);
+    tabsCode.set(currentTabId, tabLockKey);
+    const timeNow = Math.floor(new Date().getTime() / 1000);
+    const closingTime = timeNow + time;
+    tabCloseTime.set(closingTime, { tabId: currentTabId, pass: tabLockKey });
+  }
+  currentTabId = activeInfo.tabId;
+  const newTabKey = generateRandom8DigitNumber();
+  tabsCode.set(currentTabId, newTabKey);
+});

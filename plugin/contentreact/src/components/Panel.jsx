@@ -7,7 +7,7 @@ import Tabs from "./Tabs";
 import CreateGroupComponent from "./CreateGroupComponent";
 import NavigationMenu from "./NavigationMenu";
 import InfoDisplayPanel from "./InfoDisplayPanel";
-
+import AddGroupViaLink from './AddGroupViaLink';
 const Panel = ()=>{
     const [displayPanel, setDisplayPanel] = useState(false);
     const [search, setSearch] = useState("");
@@ -17,7 +17,37 @@ const Panel = ()=>{
     const [selectedTab, setSelectedTab] = useState(null);
     const [searchedGroups, setSearchedGroups] = useState([]);
     const [groupId, setGroupId] = useState(null);
+    const [simultaneousPress, setSimultaneousPress] = useState(false);
+    const [tabs, setTabs] = useState([]);
+    const [windowVariable, setWindowVariable] = useState(false);
+    const [displayStarTabs, setDisplayStarTabs] = useState(false);
+    const [groups, setGroups] = useState([]);
+    const [groupTabs, setGroupTabs] = useState([]);
     const port = chrome.runtime.connect({ name: "tabify" });
+
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.code === "KeyQ") {
+                setSimultaneousPress(true);
+            }
+        };
+
+        const handleKeyUp = (event) => {
+            if (event.code === "KeyQ") {
+                setSimultaneousPress(false);
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keyup", handleKeyUp);
+        };
+    }, []);
+
 
     useEffect(() => {
         //getting all tabs
@@ -46,6 +76,79 @@ const Panel = ()=>{
         };
         port.postMessage(starWindowVar);
     };
+
+    useEffect(() => {
+        port.onMessage.addListener(function (response) {
+        // console.log(response);
+        const { id } = response;
+        if (id === 1) {
+            const { data } = response;
+            console.log(data);
+            const urlMap = {};
+
+            data.forEach((obj) => {
+            if (urlMap[obj.url] === undefined) {
+                urlMap[obj.url] = true;
+                obj.duplicate = false;
+            } else {
+                obj.duplicate = true;
+            }
+            });
+            setTabs(data);
+        } else if (id === 10) {
+            setDisplayPanel(false);
+        } else if (id === 14) {
+            const { currentWindow } = response;
+            setWindowVariable(currentWindow);
+        } else if (id === 21) {
+            const { showStarTabs } = response;
+            setDisplayStarTabs(showStarTabs);
+        } else if (id === 23 || id === 31) {
+            const { data } = response;
+            displayToast(data);
+        } else if (id === 24) {
+            const { data } = response;
+            fillGroups(data);
+        } else if (id === 25) {
+            const { data } = response;
+            displayToast(data);
+            setDisplayMain("tabs");
+        } else if (id === 26) {
+            const { data } = response;
+            if (data.success === true) {
+            setGroupTabs(data.data.tabs);
+            }
+        }
+        });
+    }, [port]);
+
+
+    useEffect(() => {
+        if (simultaneousPress) {
+        setDisplayPanel((prevState) => !prevState);
+        getAllTabsInfo();
+        getCurrentWindowVariable();
+        getStarWindowVariable();
+        }
+    }, [simultaneousPress]);
+
+    useEffect(() => {
+        setEffectiveTabs();
+    }, [search, tabs, displayStarTabs, effectiveGroupTabs, groups]);
+
+    const displayToast = (data) => {
+        if (data.success) {
+            toast.success(data.message);
+        } else {
+            toast.error(data.message);
+        }
+    };
+
+    const fillGroups = (data) => {
+    if (data.success) {
+      setGroups(data.data.group_list);
+    }
+  };
 
     return(
         <>
