@@ -13,7 +13,7 @@ const action = "null";
 
 (async () => {
   chrome.runtime.onConnect.addListener(function (port) {
-    console.assert(port.name === "tabify");
+    console.assert(port.name === "tabninja");
     port.onMessage.addListener(function (msg) {
       const { id } = msg;
       switch (id) {

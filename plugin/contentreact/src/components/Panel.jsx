@@ -23,7 +23,9 @@ const Panel = ()=>{
     const [displayStarTabs, setDisplayStarTabs] = useState(false);
     const [groups, setGroups] = useState([]);
     const [groupTabs, setGroupTabs] = useState([]);
-    const port = chrome.runtime.connect({ name: "tabify" });
+    const [effectiveGroupTabs, setEffectiveGroupTabs] = useState([]);
+    const [searchedGroupTabs, setSerachedGroupTabs] = useState([]);
+    const port = chrome.runtime.connect({ name: "tabninja" });
 
 
     useEffect(() => {
@@ -48,34 +50,12 @@ const Panel = ()=>{
         };
     }, []);
 
-
     useEffect(() => {
         //getting all tabs
         getAllTabsInfo();
         getCurrentWindowVariable();
         getStarWindowVariable();
     }, []);
-
-    const getAllTabsInfo = () => {
-        const getAllTabs = {
-            id: 1,
-        };
-        port.postMessage(getAllTabs);
-    };
-
-    const getCurrentWindowVariable = () => {
-        const getWindowVariable = {
-            id: 14,
-        };
-        port.postMessage(getWindowVariable);
-    };
-
-    const getStarWindowVariable = () => {
-        const starWindowVar = {
-            id: 21,
-        };
-        port.postMessage(starWindowVar);
-    };
 
     useEffect(() => {
         port.onMessage.addListener(function (response) {
@@ -122,13 +102,12 @@ const Panel = ()=>{
         });
     }, [port]);
 
-
     useEffect(() => {
         if (simultaneousPress) {
-        setDisplayPanel((prevState) => !prevState);
-        getAllTabsInfo();
-        getCurrentWindowVariable();
-        getStarWindowVariable();
+            setDisplayPanel((prevState) => !prevState);
+            getAllTabsInfo();
+            getCurrentWindowVariable();
+            getStarWindowVariable();
         }
     }, [simultaneousPress]);
 
@@ -136,19 +115,110 @@ const Panel = ()=>{
         setEffectiveTabs();
     }, [search, tabs, displayStarTabs, effectiveGroupTabs, groups]);
 
+    //content.js to background.js ---------------------------------------------------------
+    const getAllTabsInfo = () => {
+        const getAllTabs = {
+            id: 1,
+        };
+        port.postMessage(getAllTabs);
+    };
+
+    const getCurrentWindowVariable = () => {
+        const getWindowVariable = {
+            id: 14,
+        };
+        port.postMessage(getWindowVariable);
+    };
+
+    const getStarWindowVariable = () => {
+        const starWindowVar = {
+            id: 21,
+        };
+        port.postMessage(starWindowVar);
+    };
+
+    //-------------------------------------------------------------------------------------
+
+    const setEffectiveTabs = () => {
+        if (search !== "") {
+        let filteredTabs = groups.filter((group) => {
+            return group.name.toLowerCase().includes(search.toLowerCase());
+        });
+        setSearchedGroups(filteredTabs);
+        } else {
+        setSearchedGroups(groups);
+        }
+        if (search !== "") {
+        let filteredTabs = effectiveGroupTabs.filter((groupTab) => {
+            return (
+            groupTab.name.toLowerCase().includes(search.toLowerCase()) ||
+            groupTab.url.toLowerCase().includes(search.toLowerCase())
+            );
+        });
+        setSerachedGroupTabs(filteredTabs);
+        } else {
+        setSerachedGroupTabs(effectiveGroupTabs);
+        }
+        if (displayStarTabs === true && search === "") {
+        let filteredTabs = tabs.filter((tab) => {
+            return tab.isStarMarked === true;
+        });
+        setSearchedTabs(filteredTabs);
+        } else if (search !== "" && displayStarTabs === true) {
+        let filteredTabs = tabs.filter((tab) => {
+            return (
+            (tab.title.toLowerCase().includes(search.toLowerCase()) ||
+                tab.url.toLowerCase().includes(search.toLowerCase())) &&
+            tab.isStarMarked === true
+            );
+        });
+        setSearchedTabs(filteredTabs);
+        } else if (search !== "") {
+        let filteredTabs = tabs.filter((tab) => {
+            return (
+            tab.title.toLowerCase().includes(search.toLowerCase()) ||
+            tab.url.toLowerCase().includes(search.toLowerCase())
+            );
+        });
+        setSearchedTabs(filteredTabs);
+        } else {
+        setSearchedTabs(tabs);
+        }
+    };
+
     const displayToast = (data) => {
         if (data.success) {
-            toast.success(data.message);
+        toast.success(data.message);
         } else {
-            toast.error(data.message);
+        toast.error(data.message);
         }
     };
 
     const fillGroups = (data) => {
-    if (data.success) {
-      setGroups(data.data.group_list);
-    }
-  };
+        if (data.success) {
+        setGroups(data.data.group_list);
+        }
+    };
+
+    useEffect(() => {
+        console.log(displayMain);
+    }, [displayMain]);
+
+    useEffect(() => {
+        console.log(selectedTab);
+    }, [selectedTab]);
+
+    useEffect(() => {
+        groupTabs.forEach((groupTab) => {
+        if (tabs.some((tab) => tab.url === groupTab.url)) {
+            groupTab["isPresent"] = true;
+        } else {
+            groupTab["isPresent"] = false;
+        }
+        });
+
+        setEffectiveGroupTabs(groupTabs);
+    }, [groupTabs, tabs]);
 
     return(
         <>
